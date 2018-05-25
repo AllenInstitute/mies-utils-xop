@@ -8,7 +8,7 @@
 
 1100 STR#					// Custom error messages.
 BEGIN
-	"MIESUtils requires Igor 6.20 or later.\0",			// Symbol from MIESUtils.h: OLD_IGOR
+	"MIESUtils requires Igor 7.00 or later.\0",			// Symbol from MIESUtils.h: OLD_IGOR
 
 	// You can add error messages here.
 
@@ -24,14 +24,4 @@ BEGIN
 	XOP_FEATURE_FLAGS,				// Tells Igor about XOP features
 	XOPI_RESERVED,					// Reserved - must be zero.
 	XOP_TOOLKIT_VERSION				// XOP Toolkit version.
-END
-
-1100 XOPF							// Describes functions added by XOP to IGOR.
-BEGIN
-	"MIESUtilsTest\0",					// Function name.
-	F_UTIL | F_EXTERNAL,			// Function category,
-	NT_FP64,						// Return value type.
-		0,							// NOTE: 0 required to terminate list of parameter types.
-
-	0,								// NOTE: 0 required to terminate the resource.
 END

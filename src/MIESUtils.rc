@@ -84,6 +84,7 @@ END
 3 TEXTINCLUDE DISCARDABLE
 BEGIN
     "#include ""MIESUtilsWinCustom.rc""\r\n"
+    "#include ""functions.rc""\r\n"
     "\0"
 END
 
@@ -100,6 +101,7 @@ END
 // Generated from the TEXTINCLUDE 3 resource.
 //
 #include "MIESUtilsWinCustom.rc"
+#include "functions.rc"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
