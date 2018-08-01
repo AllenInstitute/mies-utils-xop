@@ -8,7 +8,11 @@
 
 1100 STR#					// Custom error messages.
 BEGIN
-	"MIESUtils requires Igor 6.20 or later.\0",				 // Symbol from MIESUtils.h: OLD_IGOR
+#if XOP_TOOLKIT_VERSION >= 800
+	"MIESUtils requires Igor 8.00 or later.\0",				 // Symbol from MIESUtils.h: OLD_IGOR
+#else
+	"MIESUtils requires Igor 7.00 or later.\0",				 // Symbol from MIESUtils.h: OLD_IGOR
+#endif
     "A unhandled C++ exception occured.\0",				 // Symbol from MIESUtils.h: UNHANDLED_CPP_EXCEPTION
     "A C++ exception occured.\0",						 // Symbol from MIESUtils.h: CPP_EXCEPTION
 

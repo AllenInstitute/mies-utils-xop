@@ -75,7 +75,11 @@ XOPMain(IORecHandle ioRecHandle) // The use of XOPMain rather than main means
   XOPInit(ioRecHandle);  // Do standard XOP initialization
   SetXOPEntry(XOPEntry); // Set entry point for future calls
 
-  if(igorVersion < 620)
+#if XOP_TOOLKIT_VERSION >= 800
+  if(igorVersion < 800)
+#else
+  if(igorVersion < 700)
+#endif
   {
     SetXOPResult(OLD_IGOR);
     return EXIT_FAILURE;
