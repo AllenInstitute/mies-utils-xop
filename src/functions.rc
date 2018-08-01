@@ -4,6 +4,13 @@
 1100 XOPF              // Describes functions added by XOP to IGOR.
 BEGIN
 
+  // variable MU_GetFreeDiskSpace(string path)
+  "MU_GetFreeDiskSpace\0",
+  F_UTIL | F_EXTERNAL,    // Function category
+  NT_FP64,          // Return value type
+    HSTRING_TYPE,      // parameter 1
+  0,
+
   // variable MU_WaveModCount(WAVE input)
   "MU_WaveModCount\0",
   F_UTIL | F_EXTERNAL,    // Function category

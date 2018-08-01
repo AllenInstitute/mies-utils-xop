@@ -2,6 +2,30 @@
 #include "MIESUtils.h"
 #include <string>
 #include "functions.h"
+#include "Helpers.h"
+#include "CustomExceptions.h"
+#include "Windows.h"
+
+// variable MU_GetFreeDiskSpace(string path);
+extern "C" int MU_GetFreeDiskSpace(MU_GetFreeDiskSpaceParams *p)
+{
+  unsigned __int64 TotalNumberOfFreeBytes;
+
+  BEGIN_OUTER_CATCH
+  if(GetDiskFreeSpaceExA(GetStringFromHandleWithDispose(p->path).c_str(),
+                         nullptr, nullptr,
+                         (PULARGE_INTEGER) &TotalNumberOfFreeBytes))
+  {
+    // note: works up to 8192 TB precisely
+    p->result = (double) TotalNumberOfFreeBytes;
+  }
+  else
+  {
+    p->result = NAN;
+  }
+  return 0;
+  END_OUTER_CATCH
+}
 
 // variable MU_WaveModCount(WAVE input)
 extern "C" int MU_WaveModCount(MU_WaveModCountParams *p)

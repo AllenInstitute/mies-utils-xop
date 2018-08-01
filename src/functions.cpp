@@ -15,6 +15,9 @@ XOPIORecResult RegisterFunction()
   switch(funcIndex)
   {
   case 0:
+    returnValue = (XOPIORecResult) MU_GetFreeDiskSpace;
+    break;
+  case 1:
     returnValue = (XOPIORecResult) MU_WaveModCount;
     break;
   }

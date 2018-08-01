@@ -5,6 +5,15 @@
 XOPIORecResult RegisterFunction();
 
 #pragma pack(2) // All structures passed to Igor are two-byte aligned.
+struct MU_GetFreeDiskSpaceParams
+{
+  Handle path;
+  double result;
+};
+typedef struct MU_GetFreeDiskSpaceParams MU_GetFreeDiskSpaceParams;
+#pragma pack()
+
+#pragma pack(2) // All structures passed to Igor are two-byte aligned.
 struct MU_WaveModCountParams
 {
   waveHndl input;
@@ -12,6 +21,9 @@ struct MU_WaveModCountParams
 };
 typedef struct MU_WaveModCountParams MU_WaveModCountParams;
 #pragma pack()
+
+// variable MU_GetFreeDiskSpace(string path)
+extern "C" int MU_GetFreeDiskSpace(MU_GetFreeDiskSpaceParams *p);
 
 // variable MU_WaveModCount(WAVE input)
 extern "C" int MU_WaveModCount(MU_WaveModCountParams *p);
