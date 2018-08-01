@@ -30,12 +30,16 @@ ENDIF()
 
 SET(SOURCES
   MIESUtils.cpp
+  Helpers.cpp
   functions.cpp
+  CustomExceptions.cpp
 )
 
 SET(HEADERS
   MIESUtils.h
+  Helpers.h
   functions.h
+  CustomExceptions.h
 )
 
 SOURCE_GROUP("Headers" FILES ${HEADERS})

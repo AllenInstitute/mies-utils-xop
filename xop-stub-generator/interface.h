@@ -4,3 +4,8 @@
 ///
 /// Builtin into Igor Pro 8.
 variable MU_WaveModCount(WAVE input);
+
+/// @brief Returns the free disk space at path in bytes, returns nan for invalid path
+///
+/// @param[in] path filesystem or network location
+variable MU_GetFreeDiskSpace(string path);
