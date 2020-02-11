@@ -4,13 +4,21 @@
 
 resource 'XOPF' (1100) {   // Describes functions added by XOP to IGOR.
   {
-
+    
   // variable MU_GetFreeDiskSpace(string path)
   "MU_GetFreeDiskSpace",
   F_UTIL | F_EXTERNAL,    // Function category
   NT_FP64,          // Return value type
   {
       HSTRING_TYPE,      // parameter 1
+  },
+
+  // variable MU_RunningInMainThread()
+  "MU_RunningInMainThread",
+  F_UTIL | F_EXTERNAL | F_THREADSAFE,    // Function category
+  NT_FP64,          // Return value type
+  {
+    
   },
 
   // variable MU_WaveModCount(WAVE input)

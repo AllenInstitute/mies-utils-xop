@@ -40,6 +40,13 @@ extern "C" int MU_WaveModCount(MU_WaveModCountParams *p)
   return 0;
 }
 
+// variable MU_RunningInMainThread()
+extern "C" int MU_RunningInMainThread(MU_RunningInMainThreadParams *p)
+{
+  p->result = RunningInMainThread();
+  return 0;
+}
+
 /*	XOPEntry()
 
   This is the entry point from the host application to the XOP for all messages

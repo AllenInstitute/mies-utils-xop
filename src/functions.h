@@ -14,6 +14,15 @@ typedef struct MU_GetFreeDiskSpaceParams MU_GetFreeDiskSpaceParams;
 #pragma pack()
 
 #pragma pack(2) // All structures passed to Igor are two-byte aligned.
+struct MU_RunningInMainThreadParams
+{
+  UserFunctionThreadInfoPtr tp; // needed for thread safe functions
+  double result;
+};
+typedef struct MU_RunningInMainThreadParams MU_RunningInMainThreadParams;
+#pragma pack()
+
+#pragma pack(2) // All structures passed to Igor are two-byte aligned.
 struct MU_WaveModCountParams
 {
   waveHndl input;
@@ -24,6 +33,9 @@ typedef struct MU_WaveModCountParams MU_WaveModCountParams;
 
 // variable MU_GetFreeDiskSpace(string path)
 extern "C" int MU_GetFreeDiskSpace(MU_GetFreeDiskSpaceParams *p);
+
+// variable MU_RunningInMainThread()
+extern "C" int MU_RunningInMainThread(MU_RunningInMainThreadParams *p);
 
 // variable MU_WaveModCount(WAVE input)
 extern "C" int MU_WaveModCount(MU_WaveModCountParams *p);
