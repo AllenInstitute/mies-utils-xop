@@ -9,3 +9,5 @@ variable MU_WaveModCount(WAVE input);
 ///
 /// @param[in] path filesystem or network location
 variable MU_GetFreeDiskSpace(string path);
+
+THREADSAFE variable MU_RunningInMainThread();
