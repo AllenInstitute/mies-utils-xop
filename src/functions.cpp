@@ -15,12 +15,15 @@ XOPIORecResult RegisterFunction()
   switch(funcIndex)
   {
   case 0:
-    returnValue = (XOPIORecResult) MU_GetFreeDiskSpace;
+    returnValue = (XOPIORecResult) MU_CalcHash;
     break;
   case 1:
-    returnValue = (XOPIORecResult) MU_RunningInMainThread;
+    returnValue = (XOPIORecResult) MU_GetFreeDiskSpace;
     break;
   case 2:
+    returnValue = (XOPIORecResult) MU_RunningInMainThread;
+    break;
+  case 3:
     returnValue = (XOPIORecResult) MU_WaveModCount;
     break;
   }

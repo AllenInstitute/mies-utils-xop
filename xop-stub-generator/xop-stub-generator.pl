@@ -27,7 +27,7 @@ if($argc < 1){
   exit 1;
 }
 
-system("ctags.exe", "--pattern-length-limit=0", "--totals=yes",  "--language-force=C", "--c-kinds=p", $ARGV[0]);
+system("ctags.exe", "--pattern-length-limit=0", "--totals=yes",  "--language-force=C", "--c-kinds=p", "--extras=-f", $ARGV[0]);
 
 open(IN,"<tags") or die "can not open file ctags";
 

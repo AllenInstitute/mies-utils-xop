@@ -5,6 +5,17 @@
 XOPIORecResult RegisterFunction();
 
 #pragma pack(2) // All structures passed to Igor are two-byte aligned.
+struct MU_CalcHashParams
+{
+  double type;
+  Handle data;
+  UserFunctionThreadInfoPtr tp; // needed for thread safe functions
+  double result;
+};
+typedef struct MU_CalcHashParams MU_CalcHashParams;
+#pragma pack()
+
+#pragma pack(2) // All structures passed to Igor are two-byte aligned.
 struct MU_GetFreeDiskSpaceParams
 {
   Handle path;
@@ -30,6 +41,9 @@ struct MU_WaveModCountParams
 };
 typedef struct MU_WaveModCountParams MU_WaveModCountParams;
 #pragma pack()
+
+// variable MU_CalcHash(string data, variable type)
+extern "C" int MU_CalcHash(MU_CalcHashParams *p);
 
 // variable MU_GetFreeDiskSpace(string path)
 extern "C" int MU_GetFreeDiskSpace(MU_GetFreeDiskSpaceParams *p);

@@ -11,3 +11,5 @@ variable MU_WaveModCount(WAVE input);
 variable MU_GetFreeDiskSpace(string path);
 
 THREADSAFE variable MU_RunningInMainThread();
+
+THREADSAFE variable MU_CalcHash(string data, variable type);

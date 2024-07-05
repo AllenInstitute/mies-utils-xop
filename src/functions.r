@@ -5,6 +5,15 @@
 resource 'XOPF' (1100) {   // Describes functions added by XOP to IGOR.
   {
     
+  // variable MU_CalcHash(string data, variable type)
+  "MU_CalcHash",
+  F_UTIL | F_EXTERNAL | F_THREADSAFE,    // Function category
+  NT_FP64,          // Return value type
+  {
+      HSTRING_TYPE,      // parameter 1
+  NT_FP64,      // parameter 2
+  },
+
   // variable MU_GetFreeDiskSpace(string path)
   "MU_GetFreeDiskSpace",
   F_UTIL | F_EXTERNAL,    // Function category

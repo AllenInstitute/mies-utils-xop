@@ -4,6 +4,14 @@
 1100 XOPF              // Describes functions added by XOP to IGOR.
 BEGIN
 
+  // variable MU_CalcHash(string data, variable type)
+  "MU_CalcHash\0",
+  F_UTIL | F_EXTERNAL | F_THREADSAFE,    // Function category
+  NT_FP64,          // Return value type
+    HSTRING_TYPE,      // parameter 1
+  NT_FP64,      // parameter 2
+  0,
+
   // variable MU_GetFreeDiskSpace(string path)
   "MU_GetFreeDiskSpace\0",
   F_UTIL | F_EXTERNAL,    // Function category

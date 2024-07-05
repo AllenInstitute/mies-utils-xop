@@ -47,6 +47,27 @@ extern "C" int MU_RunningInMainThread(MU_RunningInMainThreadParams *p)
   return 0;
 }
 
+#define XXH_INLINE_ALL
+#include "third-party/xxHash/xxHash.h"
+
+// variable MU_CalcHash(string data, variable type)
+extern "C" int MU_CalcHash(MU_CalcHashParams *p)
+{
+  BEGIN_OUTER_CATCH
+  if(p->data == nullptr)
+  {
+    return USING_NULL_STRVAR;
+  }
+
+  size_t strLen = GetHandleSize(p->data);
+
+  XXH32_hash_t hash = XXH32(*p->data, strLen, 0);
+
+  p->result = hash;
+  return 0;
+  END_OUTER_CATCH
+}
+
 /*	XOPEntry()
 
   This is the entry point from the host application to the XOP for all messages
