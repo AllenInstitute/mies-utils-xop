@@ -18,7 +18,8 @@ public:
   // implemented
   // - Compiler warning allows us to find usages later
   __declspec(deprecated("Using default error code.  You should replace this "
-                        "with a custom error code")) IgorException();
+                        "with a custom error code"))
+  IgorException();
   IgorException(int errorCode);
   IgorException(int errorCode, const std::string &errorMessage);
 
