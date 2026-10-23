@@ -5,6 +5,15 @@
 XOPIORecResult RegisterFunction();
 
 #pragma pack(2) // All structures passed to Igor are two-byte aligned.
+struct MU_GetDateTimeUTCParams
+{
+  UserFunctionThreadInfoPtr tp; // needed for thread safe functions
+  double result;
+};
+typedef struct MU_GetDateTimeUTCParams MU_GetDateTimeUTCParams;
+#pragma pack()
+
+#pragma pack(2) // All structures passed to Igor are two-byte aligned.
 struct MU_GetFreeDiskSpaceParams
 {
   Handle path;
@@ -30,6 +39,9 @@ struct MU_WaveModCountParams
 };
 typedef struct MU_WaveModCountParams MU_WaveModCountParams;
 #pragma pack()
+
+// variable MU_GetDateTimeUTC()
+extern "C" int MU_GetDateTimeUTC(MU_GetDateTimeUTCParams *p);
 
 // variable MU_GetFreeDiskSpace(string path)
 extern "C" int MU_GetFreeDiskSpace(MU_GetFreeDiskSpaceParams *p);

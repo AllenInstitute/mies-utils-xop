@@ -47,6 +47,29 @@ extern "C" int MU_RunningInMainThread(MU_RunningInMainThreadParams *p)
   return 0;
 }
 
+// variable MU_GetDateTimeUTC()
+extern "C" int MU_GetDateTimeUTC(MU_GetDateTimeUTCParams *p)
+{
+  // 100 ns intervals since 1601-01-01 UTC
+  constexpr unsigned __int64 INTERVALS_PER_SECOND = 10000000;
+  constexpr unsigned __int64 SECONDS_1601_TO_1904 = 9561628800;
+  FILETIME fileTime;
+  ULARGE_INTEGER intervals;
+
+  GetSystemTimePreciseAsFileTime(&fileTime);
+  intervals.LowPart  = fileTime.dwLowDateTime;
+  intervals.HighPart = fileTime.dwHighDateTime;
+
+  // convert seconds and fraction separately, as the number of intervals exceeds
+  // the exact integer range of double
+  p->result = (double) (intervals.QuadPart / INTERVALS_PER_SECOND -
+                        SECONDS_1601_TO_1904) +
+              (double) (intervals.QuadPart % INTERVALS_PER_SECOND) /
+                  INTERVALS_PER_SECOND;
+
+  return 0;
+}
+
 /*	XOPEntry()
 
   This is the entry point from the host application to the XOP for all messages
