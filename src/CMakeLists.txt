@@ -1,8 +1,9 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 4.2)
 
 # This file is part of the `ZeroMQ-XOP` project and licensed under BSD-3-Clause.
 
 option(WITH_LONG_NAMES "Use Long Names for Igor Pro 8" OFF)
+option(MSVC_RUNTIME_DYNAMIC "Link dynamically against the MSVC runtime library" OFF)
 
 PROJECT(MIESUtils)
 
@@ -128,8 +129,9 @@ ELSEIF(WIN32)
 
   SET_TARGET_PROPERTIES(${libname} PROPERTIES SUFFIX ".xop")
 
-  # CMAKE links by default to the MSVC runtime dynamically
-  # so we don't have to set that here
+  # Link statically against the MSVC runtime by default, so that the XOP does not
+  # depend on the installed version of the Visual C++ Redistributable
+  SET_PROPERTY(TARGET ${libname} PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<BOOL:${MSVC_RUNTIME_DYNAMIC}>:DLL>)
 
   TARGET_LINK_LIBRARIES(${libname} version.lib ${EXTRA_LIBS}
                         ${CMAKE_SOURCE_DIR}/../XOPSupport/IGOR${bitness}.lib
