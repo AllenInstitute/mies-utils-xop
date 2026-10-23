@@ -1,0 +1,5 @@
+# CMake build folders, see build.bat
+/build-*/
+
+# XOP Toolkit, not part of the repository
+/XOPSupport/
