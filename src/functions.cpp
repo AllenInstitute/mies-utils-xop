@@ -21,9 +21,12 @@ XOPIORecResult RegisterFunction()
     returnValue = (XOPIORecResult) MU_GetFreeDiskSpace;
     break;
   case 2:
-    returnValue = (XOPIORecResult) MU_RunningInMainThread;
+    returnValue = (XOPIORecResult) MU_GetMemoryStatistics;
     break;
   case 3:
+    returnValue = (XOPIORecResult) MU_RunningInMainThread;
+    break;
+  case 4:
     returnValue = (XOPIORecResult) MU_WaveModCount;
     break;
   }

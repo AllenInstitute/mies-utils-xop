@@ -23,6 +23,16 @@ typedef struct MU_GetFreeDiskSpaceParams MU_GetFreeDiskSpaceParams;
 #pragma pack()
 
 #pragma pack(2) // All structures passed to Igor are two-byte aligned.
+struct MU_GetMemoryStatisticsParams
+{
+  double type;
+  UserFunctionThreadInfoPtr tp; // needed for thread safe functions
+  double result;
+};
+typedef struct MU_GetMemoryStatisticsParams MU_GetMemoryStatisticsParams;
+#pragma pack()
+
+#pragma pack(2) // All structures passed to Igor are two-byte aligned.
 struct MU_RunningInMainThreadParams
 {
   UserFunctionThreadInfoPtr tp; // needed for thread safe functions
@@ -45,6 +55,9 @@ extern "C" int MU_GetDateTimeUTC(MU_GetDateTimeUTCParams *p);
 
 // variable MU_GetFreeDiskSpace(string path)
 extern "C" int MU_GetFreeDiskSpace(MU_GetFreeDiskSpaceParams *p);
+
+// variable MU_GetMemoryStatistics(variable type)
+extern "C" int MU_GetMemoryStatistics(MU_GetMemoryStatisticsParams *p);
 
 // variable MU_RunningInMainThread()
 extern "C" int MU_RunningInMainThread(MU_RunningInMainThreadParams *p);
