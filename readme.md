@@ -6,22 +6,12 @@ The MIES Utilities XOP adds external functions and features to Igor Pro that Igo
 
 ## Windows ##
 
-Install [latest CMAKE](https://cmake.org/download/#latest).
+Install [CMake](https://cmake.org/download/#latest) 4.2 or later and Visual Studio 2026 with the C++ workload.
 
-Requires also an installed Visual Studio.
+Put the XOP Toolkit's `XOPSupport` folder into the repository root.
 
-put the following code into a batch file in the projects folder:
+Run `build.bat` from a command prompt. It builds the XOPs for 32-bit and 64-bit and installs them into
+`output/win`.
 
-    md build
-    md build-64
-    cd build
-    cmake -G "Visual Studio 15 2017" ..\src
-    cmake --build . --config Release --target install
-    cd ..\build-64
-    cmake -G "Visual Studio 15 2017 Win64" ..\src
-    cmake --build . --config Release --target install
-    cd ..
-
-The build environment string "Visual Studio 15 2017" may differ depending on your installed build environment, e.g. for older Visual Studio installation "Visual Studio 14 2015" works.
-
-Open your Visual Studio Developer Console, which setups your build environment and run the batch file.
+The XOPs link statically against the MSVC runtime, so they do not depend on the installed Visual C++
+Redistributable. Pass `-DMSVC_RUNTIME_DYNAMIC=ON` to `build.bat` to link dynamically.

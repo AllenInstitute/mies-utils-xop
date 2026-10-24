@@ -17,8 +17,8 @@ use warnings;
 
 my $argc = @ARGV;          # get the number of arguments
 
-my ($functionIsThreadSafe,$line,@array,$funcSig, $returnType,@argsName,@argsType,@argsFirst,@argsThird,@argsSecond,@argsPointer,$rest,$funcName,@args,$arg,$i,@tmp,$resourceContentWin, $resourceContentMac);
-my ($resourceParamType,$resourceReturnType,$allParameters,$functionsWin,$functionsMac,$parameter,$allFunctionsWin,$allFunctionsMac,$argNumber,$funcIndex,$allCaseLines);
+my ($functionIsThreadSafe,$line,@array,$funcSig, $returnType,@argsName,@argsType,@argsFirst,@argsThird,@argsSecond,@argsPointer,$rest,$funcName,@args,$arg,$i,@tmp,$resourceContentWin);
+my ($resourceParamType,$resourceReturnType,$allParameters,$functionsWin,$parameter,$allFunctionsWin,$argNumber,$funcIndex,$allCaseLines);
 my ($registerFunctionBodyContent,$caseLine,$allCppParameters, $cppParamType,$functionSkeleton,$allFunctionSkeletons);
 my ($cppResultType,$allStructs,$allDeclLines,$declLine,$hfileSkeleton);
 
@@ -43,17 +43,6 @@ BEGIN
 END
 EOF
 
-our $resourceFileTemplateMac = <<EOF;
-// vim: set ft=rc:
-#include "XOPStandardHeaders.r"      // Defines XOP-specific symbols.
-
-resource 'XOPF' (1100) {   // Describes functions added by XOP to IGOR.
-  {
-    %%functionDefinitions%%
-  }
-};
-EOF
-
 our $resourceFileFunctionDefinitionWin= <<EOF;
 
   // %%funcSig%%
@@ -62,17 +51,6 @@ our $resourceFileFunctionDefinitionWin= <<EOF;
   %%returnType%%,          // Return value type
   %%parameterLine%%
   0,
-EOF
-
-our $resourceFileFunctionDefinitionMac = <<EOF;
-
-  // %%funcSig%%
-  "%%funcName%%",
-  F_UTIL | F_EXTERNAL%%ADDFUNCCAT%%,    // Function category
-  %%returnType%%,          // Return value type
-  {
-    %%parameterLine%%
-  },
 EOF
 
 our $resourceFileParameterLine = "  %%argType%%,      // parameter %%argNumber%%";
@@ -143,7 +121,6 @@ $rest="";
 $funcName="";
 $returnType="";
 $resourceContentWin="";
-$resourceContentMac="";
 $funcIndex=0;
 $allCaseLines="";
 $allStructs="";
@@ -258,21 +235,6 @@ while($line = <IN>){
 
     $allFunctionsWin .= $functionsWin;
 
-    # mac
-    $functionsMac = $resourceFileFunctionDefinitionMac;
-    $functionsMac =~ s/%%funcSig%%/$funcSig/g;
-    $functionsMac =~ s/%%funcName%%/$funcName/g;
-    $functionsMac =~ s/%%parameterLine%%/$allParameters/g;
-    $functionsMac =~ s/%%returnType%%/$resourceReturnType/g;
-    if($functionIsThreadSafe){
-      $functionsMac =~ s/%%ADDFUNCCAT%%/ | F_THREADSAFE/g;
-    }
-    else{
-      $functionsMac =~ s/%%ADDFUNCCAT%%//g;
-    }
-
-    $allFunctionsMac .= $functionsMac;
-
     print "\n\n";
 
     # cpp files
@@ -315,15 +277,6 @@ while($line = <IN>){
 
   print OUT $commonHeader;
   print OUT $resourceContentWin;
-  close(OUT);
-
-  open(OUT,">functions.r") or die "can not open resource file";
-
-  $resourceContentMac = $resourceFileTemplateMac;
-  $resourceContentMac =~ s/%%functionDefinitions%%/$allFunctionsMac/;
-
-  print OUT $commonHeader;
-  print OUT $resourceContentMac;
   close(OUT);
 
   open(OUT,">functions.cpp") or die "can not open file";

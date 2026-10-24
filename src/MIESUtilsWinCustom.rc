@@ -15,6 +15,7 @@ BEGIN
 #endif
     "A unhandled C++ exception occured.\0",				 // Symbol from MIESUtils.h: UNHANDLED_CPP_EXCEPTION
     "A C++ exception occured.\0",						 // Symbol from MIESUtils.h: CPP_EXCEPTION
+    "Invalid memory statistics type, expected an integer from 0 to 8.\0", // Symbol from MIESUtils.h: INVALID_MEMORY_STATISTICS_TYPE
 
 	// You can add error messages here.
 
