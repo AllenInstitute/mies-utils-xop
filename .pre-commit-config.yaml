@@ -29,7 +29,7 @@ repos:
   hooks:
   - id: forbid-bidi-controls
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  # same version as the clang-format the build runs, see src/CMakeLists.txt
+  # the version the sources are formatted with, later versions format them differently
   rev: v17.0.3
   hooks:
   - id: clang-format

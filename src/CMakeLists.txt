@@ -72,13 +72,6 @@ IF(MSVC)
   set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
 ENDIF()
 
-# run clang-format before building
-ADD_CUSTOM_COMMAND(TARGET ${libname}
-                   PRE_BUILD
-                   COMMAND clang-format -i ${SOURCES} ${HEADERS}
-                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-                   COMMENT "Running clang-format" VERBATIM)
-
 # The clang-tidy of Visual Studio is not in PATH, see clang-tidy.bat
 FIND_PROGRAM(CLANG_TIDY clang-tidy HINTS "$ENV{VCINSTALLDIR}Tools/Llvm/x64/bin")
 

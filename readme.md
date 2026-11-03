@@ -16,6 +16,11 @@ Run `build.bat` from a command prompt. It builds the Release XOPs for 32-bit and
 The XOPs link statically against the MSVC runtime, so they do not depend on the installed Visual C++
 Redistributable. Pass `-DMSVC_RUNTIME_DYNAMIC=ON` to `build.bat` to link dynamically.
 
+## pre-commit ##
+
+The formatting is checked with [pre-commit](https://pre-commit.com), which also runs clang-format. Run
+`pre-commit install` once to run the checks before every commit.
+
 ## clang-tidy ##
 
 Install the Visual Studio component "C++ Clang tools for Windows", which provides clang-tidy.
