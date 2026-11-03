@@ -97,7 +97,7 @@ extern "C" int MU_GetMemoryStatistics(MU_GetMemoryStatisticsParams *p)
 {
   p->result = NAN;
 
-  if(!(p->type >= 0 && p->type <= static_cast<int>(LAST_TYPE)) ||
+  if(p->type < 0 || p->type > static_cast<int>(LAST_TYPE) ||
      std::trunc(p->type) != p->type)
   {
     return INVALID_MEMORY_STATISTICS_TYPE;
