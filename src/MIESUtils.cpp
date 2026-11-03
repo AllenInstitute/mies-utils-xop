@@ -11,15 +11,14 @@
 // variable MU_GetFreeDiskSpace(string path);
 extern "C" int MU_GetFreeDiskSpace(MU_GetFreeDiskSpaceParams *p)
 {
-  unsigned __int64 TotalNumberOfFreeBytes = 0;
+  ULARGE_INTEGER TotalNumberOfFreeBytes = {};
 
   BEGIN_OUTER_CATCH
   if(GetDiskFreeSpaceExA(GetStringFromHandleWithDispose(p->path).c_str(),
-                         nullptr, nullptr,
-                         (PULARGE_INTEGER) &TotalNumberOfFreeBytes))
+                         nullptr, nullptr, &TotalNumberOfFreeBytes))
   {
     // note: works up to 8192 TB precisely
-    p->result = (double) TotalNumberOfFreeBytes;
+    p->result = (double) TotalNumberOfFreeBytes.QuadPart;
   }
   else
   {
@@ -107,9 +106,10 @@ extern "C" int MU_GetMemoryStatistics(MU_GetMemoryStatisticsParams *p)
   {
     PROCESS_MEMORY_COUNTERS_EX counters;
 
-    if(!GetProcessMemoryInfo(GetCurrentProcess(),
-                             (PROCESS_MEMORY_COUNTERS *) &counters,
-                             sizeof(counters)))
+    if(!GetProcessMemoryInfo(
+           GetCurrentProcess(),
+           reinterpret_cast<PROCESS_MEMORY_COUNTERS *>(&counters),
+           sizeof(counters)))
     {
       return WindowsErrorToIgorError(GetLastError());
     }
