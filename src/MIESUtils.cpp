@@ -205,10 +205,12 @@ XOPMain(IORecHandle ioRecHandle) // The use of XOPMain rather than main means
   SetXOPEntry(XOPEntry); // Set entry point for future calls
 
 #if XOP_TOOLKIT_VERSION >= 800
-  if(igorVersion < 800)
+  constexpr int MINIMUM_IGOR_VERSION = 800;
 #else
-  if(igorVersion < 700)
+  constexpr int MINIMUM_IGOR_VERSION = 700;
 #endif
+
+  if(igorVersion < MINIMUM_IGOR_VERSION)
   {
     SetXOPResult(OLD_IGOR);
     return EXIT_FAILURE;
