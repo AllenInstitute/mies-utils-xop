@@ -4,6 +4,20 @@ stages:
   - third
   - fourth
 
+pre-commit:
+  stage: first
+  tags:
+    - debian, docker, amd64
+  variables:
+    PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
+  image:
+    name: ${CI_REGISTRY}/internal/docker-utils:latest
+  script:
+    - pre-commit run --all-files --show-diff-on-failure
+  cache:
+    paths:
+      - ${PRE_COMMIT_HOME}
+
 download-xoptoolkit:
   stage: first
   tags:
