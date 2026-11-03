@@ -63,10 +63,11 @@ extern "C" int MU_GetDateTimeUTC(MU_GetDateTimeUTCParams *p)
 
   // convert seconds and fraction separately, as the number of intervals exceeds
   // the exact integer range of double
-  p->result = (double) (intervals.QuadPart / INTERVALS_PER_SECOND -
-                        SECONDS_1601_TO_1904) +
-              (double) (intervals.QuadPart % INTERVALS_PER_SECOND) /
-                  INTERVALS_PER_SECOND;
+  const unsigned __int64 seconds   = intervals.QuadPart / INTERVALS_PER_SECOND;
+  const unsigned __int64 remainder = intervals.QuadPart % INTERVALS_PER_SECOND;
+
+  p->result = (double) (seconds - SECONDS_1601_TO_1904) +
+              (double) remainder / INTERVALS_PER_SECOND;
 
   return 0;
 }
