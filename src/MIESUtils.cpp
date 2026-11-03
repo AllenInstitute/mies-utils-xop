@@ -75,7 +75,7 @@ extern "C" int MU_GetDateTimeUTC(MU_GetDateTimeUTCParams *p)
 namespace
 {
 /// Values of MU_GetMemoryStatistics, see interface.h
-enum MemoryStatisticsType
+enum class MemoryStatisticsType
 {
   TOTAL_PHYSICAL = 0,
   FREE_PHYSICAL,
@@ -88,7 +88,7 @@ enum MemoryStatisticsType
   PRIVATE_BYTES
 };
 
-constexpr MemoryStatisticsType LAST_TYPE = PRIVATE_BYTES;
+constexpr MemoryStatisticsType LAST_TYPE = MemoryStatisticsType::PRIVATE_BYTES;
 } // namespace
 
 // variable MU_GetMemoryStatistics(variable type)
@@ -96,7 +96,8 @@ extern "C" int MU_GetMemoryStatistics(MU_GetMemoryStatisticsParams *p)
 {
   p->result = NAN;
 
-  if(!(p->type >= 0 && p->type <= LAST_TYPE) || std::trunc(p->type) != p->type)
+  if(!(p->type >= 0 && p->type <= static_cast<int>(LAST_TYPE)) ||
+     std::trunc(p->type) != p->type)
   {
     return INVALID_MEMORY_STATISTICS_TYPE;
   }
@@ -104,7 +105,7 @@ extern "C" int MU_GetMemoryStatistics(MU_GetMemoryStatisticsParams *p)
   const auto type =
       static_cast<MemoryStatisticsType>(static_cast<int>(p->type));
 
-  if(type >= WORKING_SET)
+  if(type >= MemoryStatisticsType::WORKING_SET)
   {
     PROCESS_MEMORY_COUNTERS_EX counters;
 
@@ -118,10 +119,10 @@ extern "C" int MU_GetMemoryStatistics(MU_GetMemoryStatisticsParams *p)
 
     switch(type)
     {
-    case WORKING_SET:
+    case MemoryStatisticsType::WORKING_SET:
       p->result = (double) counters.WorkingSetSize;
       break;
-    case PEAK_WORKING_SET:
+    case MemoryStatisticsType::PEAK_WORKING_SET:
       p->result = (double) counters.PeakWorkingSetSize;
       break;
     default:
@@ -142,19 +143,19 @@ extern "C" int MU_GetMemoryStatistics(MU_GetMemoryStatisticsParams *p)
 
   switch(type)
   {
-  case TOTAL_PHYSICAL:
+  case MemoryStatisticsType::TOTAL_PHYSICAL:
     p->result = (double) status.ullTotalPhys;
     break;
-  case FREE_PHYSICAL:
+  case MemoryStatisticsType::FREE_PHYSICAL:
     p->result = (double) status.ullAvailPhys;
     break;
-  case USED_PHYSICAL:
+  case MemoryStatisticsType::USED_PHYSICAL:
     p->result = (double) (status.ullTotalPhys - status.ullAvailPhys);
     break;
-  case MEMORY_LOAD:
+  case MemoryStatisticsType::MEMORY_LOAD:
     p->result = (double) status.dwMemoryLoad;
     break;
-  case COMMIT_LIMIT:
+  case MemoryStatisticsType::COMMIT_LIMIT:
     p->result = (double) status.ullTotalPageFile;
     break;
   default:
