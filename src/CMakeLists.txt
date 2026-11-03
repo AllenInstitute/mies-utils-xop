@@ -24,7 +24,7 @@ IF(NOT WIN32)
 ENDIF()
 
 SET(RESOURCES "${PROJECT_NAME}.rc")
-SET(installFolder "${CMAKE_SOURCE_DIR}/../output/win/${bitnessLibFolder}")
+SET(installFolder "${CMAKE_SOURCE_DIR}/../output/win/${bitnessLibFolder}/$<CONFIG>")
 
 SET(SOURCES
   MIESUtils.cpp
@@ -96,7 +96,6 @@ IF(MSVC)
           RUNTIME
           DESTINATION ${installFolder})
 
-  INSTALL(FILES ${CMAKE_BINARY_DIR}/Release/${libname}.pdb
-          DESTINATION ${installFolder}
-          CONFIGURATIONS Release)
+  INSTALL(FILES $<TARGET_PDB_FILE:${libname}>
+          DESTINATION ${installFolder})
 ENDIF()

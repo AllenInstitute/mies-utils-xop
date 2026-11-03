@@ -1,5 +1,5 @@
 @echo off
-rem Build and install the XOPs for both architectures into output\win, see readme.md
+rem Build and install the Release XOPs for both architectures into output\win\<architecture>\Release, see readme.md
 rem Additional arguments are passed to the CMake configure step, e.g. -DMSVC_RUNTIME_DYNAMIC=ON
 
 setlocal

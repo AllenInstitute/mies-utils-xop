@@ -10,8 +10,8 @@ Install [CMake](https://cmake.org/download/#latest) 4.2 or later and Visual Stud
 
 Put the XOP Toolkit's `XOPSupport` folder into the repository root.
 
-Run `build.bat` from a command prompt. It builds the XOPs for 32-bit and 64-bit and installs them into
-`output/win`.
+Run `build.bat` from a command prompt. It builds the Release XOPs for 32-bit and 64-bit and installs them into
+`output/win/x86/Release` and `output/win/x64/Release`.
 
 The XOPs link statically against the MSVC runtime, so they do not depend on the installed Visual C++
 Redistributable. Pass `-DMSVC_RUNTIME_DYNAMIC=ON` to `build.bat` to link dynamically.
