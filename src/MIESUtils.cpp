@@ -182,6 +182,8 @@ extern "C" void XOPEntry(void)
   case FUNCADDRS:
     result = RegisterFunction();
     break;
+  default:
+    break;
   }
   SetXOPResult(result);
 }
