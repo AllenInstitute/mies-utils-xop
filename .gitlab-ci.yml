@@ -66,6 +66,25 @@ compile-xop-windows:
       # only this architecture, the checkout also contains the committed XOPs of the other one
       - output/win/$ARCHITECTURE
 
+clang-tidy:
+  stage: second
+  tags:
+    - windows, shell, amd64
+  variables:
+      # own mspdbsrv.exe per job
+      _MSPDBSRV_ENDPOINT_: "$CI_JOB_ID"
+  script:
+    - call clang-tidy.bat
+  after_script:
+    - git diff --output=clang-tidy-fixes.patch
+  needs:
+    - download-xoptoolkit
+  artifacts:
+    when: on_failure
+    expire_in: 1 week
+    paths:
+      - clang-tidy-fixes.patch
+
 packaging:
   stage: third
   tags:
@@ -81,6 +100,7 @@ packaging:
     - zip -r package/MIESUtils-PDB-${VERSION_STR}.zip output/win/*/*.pdb
   needs:
     - compile-xop-windows
+    - clang-tidy
   artifacts:
     paths:
       - package
