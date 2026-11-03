@@ -2,8 +2,8 @@
 #include "XOPStandardHeaders.h" // Include ANSI headers, Mac headers, IgorXOP.h, XOP.h and XOPSupport.h
 #include <MIESUtils.h>
 #include <Windows.h>
-#include <sstream>
 #include <exception>
+#include <sstream>
 #include <string>
 
 class IgorException : public std::exception

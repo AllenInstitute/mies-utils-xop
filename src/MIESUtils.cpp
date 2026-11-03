@@ -1,12 +1,12 @@
 #include "XOPStandardHeaders.h" // Include ANSI headers, Mac headers, IgorXOP.h, XOP.h and XOPSupport.h
-#include "MIESUtils.h"
-#include <string>
-#include "functions.h"
-#include "Helpers.h"
 #include "CustomExceptions.h"
+#include "Helpers.h"
+#include "MIESUtils.h"
 #include "Windows.h"
-#include <psapi.h>
+#include "functions.h"
 #include <cmath>
+#include <psapi.h>
+#include <string>
 
 // variable MU_GetFreeDiskSpace(string path);
 extern "C" int MU_GetFreeDiskSpace(MU_GetFreeDiskSpaceParams *p)
