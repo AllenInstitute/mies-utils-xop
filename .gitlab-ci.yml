@@ -1,0 +1,91 @@
+stages:
+  - first
+  - second
+  - third
+  - fourth
+
+download-xoptoolkit:
+  stage: first
+  tags:
+    - docker, debian, amd64
+  cache:
+    key: xop-toolkit-8
+    paths:
+      - XOPSupport
+  image:
+    name: ${CI_REGISTRY}/internal/docker-utils
+  script:
+    - if [[ -d XOPSupport ]]; then exit 0; fi
+    - curl -L --user ${XOPTOOLKIT_USER}:${XOPTOOLKIT_PW} https://www.wavemetrics.net/ecomm/xop/XOPToolkit8.exe --output XOPToolkit8.exe
+    - 7z x -y XOPToolkit8.exe
+    - mv XOP\ Toolkit\ 8/IgorXOPs8/XOPSupport .
+  artifacts:
+    paths:
+      - XOPSupport
+
+compile-xop-windows:
+  stage: second
+  tags:
+    - windows, shell, amd64
+  variables:
+      # own mspdbsrv.exe per job
+      _MSPDBSRV_ENDPOINT_: "$CI_JOB_ID"
+  parallel:
+    matrix:
+      - ARCHITECTURE:
+        - x86
+        - x64
+  rules:
+    - if: '$ARCHITECTURE == "x64"'
+      variables:
+        GENERATOR_PLATFORM: "x64"
+    - if: '$ARCHITECTURE == "x86"'
+      variables:
+        GENERATOR_PLATFORM: "Win32"
+  script:
+    - cmake -B build -S src -G "Visual Studio 18 2026" -A %GENERATOR_PLATFORM%
+    - cmake --build build --config Release --target install
+  needs:
+    - download-xoptoolkit
+  artifacts:
+    paths:
+      # only this architecture, the checkout also contains the committed XOPs of the other one
+      - output/win/$ARCHITECTURE
+
+packaging:
+  stage: third
+  tags:
+    - debian, docker, amd64
+  image:
+    name: ${CI_REGISTRY}/internal/docker-utils:latest
+  variables:
+      GIT_DEPTH: 0
+  script:
+    - mkdir package
+    - VERSION_STR=$(git describe --tags --always --match "version")
+    - zip -r package/MIESUtils-XOP-${VERSION_STR}.zip readme.md "IgorHelpFile/MIESUtils Help.ihf" output/win/*/*.xop
+    - zip -r package/MIESUtils-PDB-${VERSION_STR}.zip output/win/*/*.pdb
+  needs:
+    - compile-xop-windows
+  artifacts:
+    paths:
+      - package
+
+symbol_creation_and_upload:
+  tags:
+    - debian, docker, amd64
+  stage: fourth
+  image:
+    name: ${CI_REGISTRY}/internal/docker-utils:latest
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success
+  needs:
+    - compile-xop-windows
+  script:
+    - mkdir symbols
+    - symstore -z symbols output/win/x64/*.pdb output/win/x64/*.xop
+    - symstore -z symbols output/win/x86/*.pdb output/win/x86/*.xop
+    - lftp -e "mirror --reverse -n symbols /; bye" -u $FTP_SYMBOLS_USER,$FTP_SYMBOLS_PASS $FTP_URL
