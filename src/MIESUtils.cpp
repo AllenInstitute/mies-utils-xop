@@ -5,6 +5,7 @@
 #include "Windows.h"
 #include "functions.h"
 #include <cmath>
+#include <cstdint>
 #include <psapi.h>
 #include <string>
 
@@ -75,7 +76,7 @@ extern "C" int MU_GetDateTimeUTC(MU_GetDateTimeUTCParams *p)
 namespace
 {
 /// Values of MU_GetMemoryStatistics, see interface.h
-enum class MemoryStatisticsType
+enum class MemoryStatisticsType : std::uint8_t
 {
   TOTAL_PHYSICAL = 0,
   FREE_PHYSICAL,
