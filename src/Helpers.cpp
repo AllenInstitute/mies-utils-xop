@@ -8,7 +8,7 @@ std::string GetStringFromHandle(const Handle &strHandle)
     return "";
   }
   const size_t strLen = GetHandleSize(strHandle);
-  return std::string(*strHandle, strLen);
+  return {*strHandle, strLen};
 }
 
 std::string GetStringFromHandleWithDispose(const Handle &strHandle)
