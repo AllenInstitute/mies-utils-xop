@@ -46,7 +46,10 @@ compile-xop-windows:
       _MSPDBSRV_ENDPOINT_: "$CI_JOB_ID"
   parallel:
     matrix:
-      - ARCHITECTURE:
+      - CONFIG_TYPE:
+        - Release
+        - Debug
+        ARCHITECTURE:
         - x86
         - x64
   rules:
@@ -58,13 +61,13 @@ compile-xop-windows:
         GENERATOR_PLATFORM: "Win32"
   script:
     - cmake -B build -S src -G "Visual Studio 18 2026" -A %GENERATOR_PLATFORM%
-    - cmake --build build --config Release --target install
+    - cmake --build build --config %CONFIG_TYPE% --target install
   needs:
     - download-xoptoolkit
   artifacts:
     paths:
-      # only this architecture, the checkout also contains the committed XOPs of the other one
-      - output/win/$ARCHITECTURE
+      # only this job's XOP, the checkout also contains the committed Release XOPs
+      - output/win/$ARCHITECTURE/$CONFIG_TYPE
 
 clang-tidy:
   stage: second
@@ -96,8 +99,8 @@ packaging:
   script:
     - mkdir package
     - VERSION_STR=$(git describe --tags --always --match "version")
-    - zip -r package/MIESUtils-XOP-${VERSION_STR}.zip readme.md "IgorHelpFile/MIESUtils Help.ihf" output/win/*/*.xop
-    - zip -r package/MIESUtils-PDB-${VERSION_STR}.zip output/win/*/*.pdb
+    - zip -r package/MIESUtils-XOP-${VERSION_STR}.zip readme.md "IgorHelpFile/MIESUtils Help.ihf" output/win/*/Release/*.xop
+    - zip -r package/MIESUtils-PDB-${VERSION_STR}.zip output/win/*/Release/*.pdb
   needs:
     - compile-xop-windows
     - clang-tidy
@@ -120,6 +123,6 @@ symbol_creation_and_upload:
     - compile-xop-windows
   script:
     - mkdir symbols
-    - symstore -z symbols output/win/x64/*.pdb output/win/x64/*.xop
-    - symstore -z symbols output/win/x86/*.pdb output/win/x86/*.xop
+    - symstore -z symbols output/win/x64/Release/*.pdb output/win/x64/Release/*.xop
+    - symstore -z symbols output/win/x86/Release/*.pdb output/win/x86/Release/*.xop
     - lftp -e "mirror --reverse -n symbols /; bye" -u $FTP_SYMBOLS_USER,$FTP_SYMBOLS_PASS $FTP_URL
