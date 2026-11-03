@@ -32,7 +32,7 @@ int IgorException::HandleException() const
 // std::exception
 //--------------------------------------------------------------
 
-int HandleException(const std::exception e)
+int HandleException(const std::exception &e)
 {
   /// No Igor error code associated with this.
   std::stringstream sstr;
