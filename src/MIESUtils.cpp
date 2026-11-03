@@ -67,7 +67,7 @@ extern "C" int MU_GetDateTimeUTC(MU_GetDateTimeUTCParams *p)
   const unsigned __int64 remainder = intervals.QuadPart % INTERVALS_PER_SECOND;
 
   p->result = (double) (seconds - SECONDS_1601_TO_1904) +
-              (double) remainder / INTERVALS_PER_SECOND;
+              ((double) remainder / INTERVALS_PER_SECOND);
 
   return 0;
 }
