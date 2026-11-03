@@ -22,7 +22,7 @@ public:
   IgorException(int errorCode);
   IgorException(int errorCode, const std::string &errorMessage);
 
-  const char *what() const;
+  const char *what() const override;
 
   /// Displays the exception if required; gets the return code.
   int HandleException() const;
