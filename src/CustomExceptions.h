@@ -28,7 +28,7 @@ public:
   int HandleException() const;
 };
 
-int HandleException(const std::exception &e);
+int HandleException(const std::exception &exception);
 
 #define BEGIN_OUTER_CATCH                                                      \
   try                                                                          \
