@@ -85,9 +85,10 @@ enum MemoryStatisticsType
   FREE_COMMIT,
   WORKING_SET,
   PEAK_WORKING_SET,
-  PRIVATE_BYTES,
-  LAST_TYPE = PRIVATE_BYTES
+  PRIVATE_BYTES
 };
+
+constexpr MemoryStatisticsType LAST_TYPE = PRIVATE_BYTES;
 } // namespace
 
 // variable MU_GetMemoryStatistics(variable type)
