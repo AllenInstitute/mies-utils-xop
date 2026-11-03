@@ -1,5 +1,6 @@
 #include "CustomExceptions.h"
 #include <sstream>
+#include <utility>
 
 //--------------------------------------------------------------
 // IgorException
@@ -13,8 +14,8 @@ IgorException::IgorException(int errorCode) : ErrorCode(errorCode)
 {
 }
 
-IgorException::IgorException(int errorCode, const std::string &errorMessage)
-    : ErrorCode(errorCode), Message(errorMessage)
+IgorException::IgorException(int errorCode, std::string errorMessage)
+    : ErrorCode(errorCode), Message(std::move(errorMessage))
 {
 }
 

@@ -20,7 +20,7 @@ public:
   __declspec(deprecated("Using default error code.  You should replace this "
                         "with a custom error code")) IgorException();
   explicit IgorException(int errorCode);
-  IgorException(int errorCode, const std::string &errorMessage);
+  IgorException(int errorCode, std::string errorMessage);
 
   const char *what() const override;
 
