@@ -11,7 +11,7 @@
 // variable MU_GetFreeDiskSpace(string path);
 extern "C" int MU_GetFreeDiskSpace(MU_GetFreeDiskSpaceParams *p)
 {
-  unsigned __int64 TotalNumberOfFreeBytes;
+  unsigned __int64 TotalNumberOfFreeBytes = 0;
 
   BEGIN_OUTER_CATCH
   if(GetDiskFreeSpaceExA(GetStringFromHandleWithDispose(p->path).c_str(),
