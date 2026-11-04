@@ -1,0 +1,128 @@
+stages:
+  - first
+  - second
+  - third
+  - fourth
+
+pre-commit:
+  stage: first
+  tags:
+    - debian, docker, amd64
+  variables:
+    PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
+  image:
+    name: ${CI_REGISTRY}/internal/docker-utils:latest
+  script:
+    - pre-commit run --all-files --show-diff-on-failure
+  cache:
+    paths:
+      - ${PRE_COMMIT_HOME}
+
+download-xoptoolkit:
+  stage: first
+  tags:
+    - docker, debian, amd64
+  cache:
+    key: xop-toolkit-8
+    paths:
+      - XOPSupport
+  image:
+    name: ${CI_REGISTRY}/internal/docker-utils
+  script:
+    - if [[ -d XOPSupport ]]; then exit 0; fi
+    - curl -L --user ${XOPTOOLKIT_USER}:${XOPTOOLKIT_PW} https://www.wavemetrics.net/ecomm/xop/XOPToolkit8.exe --output XOPToolkit8.exe
+    - 7z x -y XOPToolkit8.exe
+    - mv XOP\ Toolkit\ 8/IgorXOPs8/XOPSupport .
+  artifacts:
+    paths:
+      - XOPSupport
+
+compile-xop-windows:
+  stage: second
+  tags:
+    - windows, shell, amd64
+  variables:
+      # own mspdbsrv.exe per job
+      _MSPDBSRV_ENDPOINT_: "$CI_JOB_ID"
+  parallel:
+    matrix:
+      - CONFIG_TYPE:
+        - Release
+        - Debug
+        ARCHITECTURE:
+        - x86
+        - x64
+  rules:
+    - if: '$ARCHITECTURE == "x64"'
+      variables:
+        GENERATOR_PLATFORM: "x64"
+    - if: '$ARCHITECTURE == "x86"'
+      variables:
+        GENERATOR_PLATFORM: "Win32"
+  script:
+    - cmake -B build -S src -G "Visual Studio 18 2026" -A %GENERATOR_PLATFORM%
+    - cmake --build build --config %CONFIG_TYPE% --target install
+  needs:
+    - download-xoptoolkit
+  artifacts:
+    paths:
+      # only this job's XOP, the checkout also contains the committed Release XOPs
+      - output/win/$ARCHITECTURE/$CONFIG_TYPE
+
+clang-tidy:
+  stage: second
+  tags:
+    - windows, shell, amd64
+  variables:
+      # own mspdbsrv.exe per job
+      _MSPDBSRV_ENDPOINT_: "$CI_JOB_ID"
+  script:
+    - call clang-tidy.bat
+  after_script:
+    - git diff --output=clang-tidy-fixes.patch
+  needs:
+    - download-xoptoolkit
+  artifacts:
+    when: on_failure
+    expire_in: 1 week
+    paths:
+      - clang-tidy-fixes.patch
+
+packaging:
+  stage: third
+  tags:
+    - debian, docker, amd64
+  image:
+    name: ${CI_REGISTRY}/internal/docker-utils:latest
+  variables:
+      GIT_DEPTH: 0
+  script:
+    - mkdir package
+    - VERSION_STR=$(git describe --tags --always --match "version")
+    - zip -r package/MIESUtils-XOP-${VERSION_STR}.zip readme.md "IgorHelpFile/MIESUtils Help.ihf" output/win/*/Release/*.xop
+    - zip -r package/MIESUtils-PDB-${VERSION_STR}.zip output/win/*/Release/*.pdb
+  needs:
+    - compile-xop-windows
+    - clang-tidy
+  artifacts:
+    paths:
+      - package
+
+symbol_creation_and_upload:
+  tags:
+    - debian, docker, amd64
+  stage: fourth
+  image:
+    name: ${CI_REGISTRY}/internal/docker-utils:latest
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success
+  needs:
+    - compile-xop-windows
+  script:
+    - mkdir symbols
+    - symstore -z symbols output/win/x64/Release/*.pdb output/win/x64/Release/*.xop
+    - symstore -z symbols output/win/x86/Release/*.pdb output/win/x86/Release/*.xop
+    - lftp -e "mirror --reverse -n symbols /; bye" -u $FTP_SYMBOLS_USER,$FTP_SYMBOLS_PASS $FTP_URL

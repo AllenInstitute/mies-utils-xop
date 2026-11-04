@@ -1,5 +1,6 @@
 #include "CustomExceptions.h"
 #include <sstream>
+#include <utility>
 
 //--------------------------------------------------------------
 // IgorException
@@ -13,8 +14,8 @@ IgorException::IgorException(int errorCode) : ErrorCode(errorCode)
 {
 }
 
-IgorException::IgorException(int errorCode, const std::string &errorMessage)
-    : ErrorCode(errorCode), Message(errorMessage)
+IgorException::IgorException(int errorCode, std::string errorMessage)
+    : ErrorCode(errorCode), Message(std::move(errorMessage))
 {
 }
 
@@ -32,11 +33,11 @@ int IgorException::HandleException() const
 // std::exception
 //--------------------------------------------------------------
 
-int HandleException(const std::exception e)
+int HandleException(const std::exception &exception)
 {
   /// No Igor error code associated with this.
   std::stringstream sstr;
-  sstr << "BUG: Ecountered C++ exception: " << e.what();
+  sstr << "BUG: Ecountered C++ exception: " << exception.what();
   XOPNotice(sstr.str().c_str());
   return CPP_EXCEPTION;
 }

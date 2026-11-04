@@ -3,3 +3,6 @@
 
 # XOP Toolkit, not part of the repository
 /XOPSupport/
+
+# Debug XOPs, only the Release XOPs are committed
+/output/win/*/Debug/

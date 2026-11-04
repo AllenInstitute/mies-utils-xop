@@ -10,8 +10,20 @@ Install [CMake](https://cmake.org/download/#latest) 4.2 or later and Visual Stud
 
 Put the XOP Toolkit's `XOPSupport` folder into the repository root.
 
-Run `build.bat` from a command prompt. It builds the XOPs for 32-bit and 64-bit and installs them into
-`output/win`.
+Run `build.bat` from a command prompt. It builds the Release XOPs for 32-bit and 64-bit and installs them into
+`output/win/x86/Release` and `output/win/x64/Release`.
 
 The XOPs link statically against the MSVC runtime, so they do not depend on the installed Visual C++
 Redistributable. Pass `-DMSVC_RUNTIME_DYNAMIC=ON` to `build.bat` to link dynamically.
+
+## pre-commit ##
+
+The formatting is checked with [pre-commit](https://pre-commit.com), which also runs clang-format. Run
+`pre-commit install` once to run the checks before every commit.
+
+## clang-tidy ##
+
+Install the Visual Studio component "C++ Clang tools for Windows", which provides clang-tidy.
+
+Run `clang-tidy.bat` from a command prompt. It checks the sources with the rules of `.clang-tidy` and applies
+the fixes clang-tidy suggests. The CI runs it as well and provides the fixes as a patch if it fails.

@@ -1,25 +1,25 @@
 #include "XOPStandardHeaders.h" // Include ANSI headers, Mac headers, IgorXOP.h, XOP.h and XOPSupport.h
-#include "MIESUtils.h"
-#include <string>
-#include "functions.h"
-#include "Helpers.h"
 #include "CustomExceptions.h"
+#include "Helpers.h"
+#include "MIESUtils.h"
 #include "Windows.h"
-#include <psapi.h>
+#include "functions.h"
 #include <cmath>
+#include <cstdint>
+#include <psapi.h>
+#include <string>
 
 // variable MU_GetFreeDiskSpace(string path);
 extern "C" int MU_GetFreeDiskSpace(MU_GetFreeDiskSpaceParams *p)
 {
-  unsigned __int64 TotalNumberOfFreeBytes;
+  ULARGE_INTEGER TotalNumberOfFreeBytes = {};
 
   BEGIN_OUTER_CATCH
   if(GetDiskFreeSpaceExA(GetStringFromHandleWithDispose(p->path).c_str(),
-                         nullptr, nullptr,
-                         (PULARGE_INTEGER) &TotalNumberOfFreeBytes))
+                         nullptr, nullptr, &TotalNumberOfFreeBytes))
   {
     // note: works up to 8192 TB precisely
-    p->result = (double) TotalNumberOfFreeBytes;
+    p->result = (double) TotalNumberOfFreeBytes.QuadPart;
   }
   else
   {
@@ -64,10 +64,11 @@ extern "C" int MU_GetDateTimeUTC(MU_GetDateTimeUTCParams *p)
 
   // convert seconds and fraction separately, as the number of intervals exceeds
   // the exact integer range of double
-  p->result = (double) (intervals.QuadPart / INTERVALS_PER_SECOND -
-                        SECONDS_1601_TO_1904) +
-              (double) (intervals.QuadPart % INTERVALS_PER_SECOND) /
-                  INTERVALS_PER_SECOND;
+  const unsigned __int64 seconds   = intervals.QuadPart / INTERVALS_PER_SECOND;
+  const unsigned __int64 remainder = intervals.QuadPart % INTERVALS_PER_SECOND;
+
+  p->result = (double) (seconds - SECONDS_1601_TO_1904) +
+              ((double) remainder / INTERVALS_PER_SECOND);
 
   return 0;
 }
@@ -75,7 +76,7 @@ extern "C" int MU_GetDateTimeUTC(MU_GetDateTimeUTCParams *p)
 namespace
 {
 /// Values of MU_GetMemoryStatistics, see interface.h
-enum MemoryStatisticsType
+enum class MemoryStatisticsType : std::uint8_t
 {
   TOTAL_PHYSICAL = 0,
   FREE_PHYSICAL,
@@ -85,9 +86,10 @@ enum MemoryStatisticsType
   FREE_COMMIT,
   WORKING_SET,
   PEAK_WORKING_SET,
-  PRIVATE_BYTES,
-  LAST_TYPE = PRIVATE_BYTES
+  PRIVATE_BYTES
 };
+
+constexpr MemoryStatisticsType LAST_TYPE = MemoryStatisticsType::PRIVATE_BYTES;
 } // namespace
 
 // variable MU_GetMemoryStatistics(variable type)
@@ -95,7 +97,8 @@ extern "C" int MU_GetMemoryStatistics(MU_GetMemoryStatisticsParams *p)
 {
   p->result = NAN;
 
-  if(!(p->type >= 0 && p->type <= LAST_TYPE) || std::trunc(p->type) != p->type)
+  if(p->type < 0 || p->type > static_cast<int>(LAST_TYPE) ||
+     std::trunc(p->type) != p->type)
   {
     return INVALID_MEMORY_STATISTICS_TYPE;
   }
@@ -103,23 +106,24 @@ extern "C" int MU_GetMemoryStatistics(MU_GetMemoryStatisticsParams *p)
   const auto type =
       static_cast<MemoryStatisticsType>(static_cast<int>(p->type));
 
-  if(type >= WORKING_SET)
+  if(type >= MemoryStatisticsType::WORKING_SET)
   {
     PROCESS_MEMORY_COUNTERS_EX counters;
 
-    if(!GetProcessMemoryInfo(GetCurrentProcess(),
-                             (PROCESS_MEMORY_COUNTERS *) &counters,
-                             sizeof(counters)))
+    if(!GetProcessMemoryInfo(
+           GetCurrentProcess(),
+           reinterpret_cast<PROCESS_MEMORY_COUNTERS *>(&counters),
+           sizeof(counters)))
     {
       return WindowsErrorToIgorError(GetLastError());
     }
 
     switch(type)
     {
-    case WORKING_SET:
+    case MemoryStatisticsType::WORKING_SET:
       p->result = (double) counters.WorkingSetSize;
       break;
-    case PEAK_WORKING_SET:
+    case MemoryStatisticsType::PEAK_WORKING_SET:
       p->result = (double) counters.PeakWorkingSetSize;
       break;
     default:
@@ -140,19 +144,19 @@ extern "C" int MU_GetMemoryStatistics(MU_GetMemoryStatisticsParams *p)
 
   switch(type)
   {
-  case TOTAL_PHYSICAL:
+  case MemoryStatisticsType::TOTAL_PHYSICAL:
     p->result = (double) status.ullTotalPhys;
     break;
-  case FREE_PHYSICAL:
+  case MemoryStatisticsType::FREE_PHYSICAL:
     p->result = (double) status.ullAvailPhys;
     break;
-  case USED_PHYSICAL:
+  case MemoryStatisticsType::USED_PHYSICAL:
     p->result = (double) (status.ullTotalPhys - status.ullAvailPhys);
     break;
-  case MEMORY_LOAD:
+  case MemoryStatisticsType::MEMORY_LOAD:
     p->result = (double) status.dwMemoryLoad;
     break;
-  case COMMIT_LIMIT:
+  case MemoryStatisticsType::COMMIT_LIMIT:
     p->result = (double) status.ullTotalPageFile;
     break;
   default:
@@ -178,6 +182,8 @@ extern "C" void XOPEntry(void)
   case FUNCADDRS:
     result = RegisterFunction();
     break;
+  default:
+    break;
   }
   SetXOPResult(result);
 }
@@ -199,10 +205,12 @@ XOPMain(IORecHandle ioRecHandle) // The use of XOPMain rather than main means
   SetXOPEntry(XOPEntry); // Set entry point for future calls
 
 #if XOP_TOOLKIT_VERSION >= 800
-  if(igorVersion < 800)
+  constexpr int MINIMUM_IGOR_VERSION = 800;
 #else
-  if(igorVersion < 700)
+  constexpr int MINIMUM_IGOR_VERSION = 700;
 #endif
+
+  if(igorVersion < MINIMUM_IGOR_VERSION)
   {
     SetXOPResult(OLD_IGOR);
     return EXIT_FAILURE;

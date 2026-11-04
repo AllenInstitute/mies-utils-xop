@@ -1,10 +1,10 @@
 #pragma once
 
 // clang-format off
-#define OLD_IGOR 1 + FIRST_XOP_ERR
-#define UNHANDLED_CPP_EXCEPTION 2 + FIRST_XOP_ERR
-#define CPP_EXCEPTION 3 + FIRST_XOP_ERR
-#define INVALID_MEMORY_STATISTICS_TYPE 4 + FIRST_XOP_ERR
+#define OLD_IGOR (1 + FIRST_XOP_ERR)
+#define UNHANDLED_CPP_EXCEPTION (2 + FIRST_XOP_ERR)
+#define CPP_EXCEPTION (3 + FIRST_XOP_ERR)
+#define INVALID_MEMORY_STATISTICS_TYPE (4 + FIRST_XOP_ERR)
 // clang-format on
 
 // Defined return values

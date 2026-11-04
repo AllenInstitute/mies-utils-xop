@@ -29,7 +29,7 @@ BEGIN
   "MU_RunningInMainThread\0",
   F_UTIL | F_EXTERNAL | F_THREADSAFE,    // Function category
   NT_FP64,          // Return value type
-  
+
   0,
 
   // variable MU_WaveModCount(WAVE input)

@@ -4,9 +4,11 @@ std::string GetStringFromHandle(const Handle &strHandle)
 {
   // Check for special case of null handle.
   if(strHandle == nullptr)
+  {
     return "";
-  size_t strLen = GetHandleSize(strHandle);
-  return std::string(*strHandle, strLen);
+  }
+  const size_t strLen = GetHandleSize(strHandle);
+  return {*strHandle, strLen};
 }
 
 std::string GetStringFromHandleWithDispose(const Handle &strHandle)

@@ -2,8 +2,8 @@
 #include "XOPStandardHeaders.h" // Include ANSI headers, Mac headers, IgorXOP.h, XOP.h and XOPSupport.h
 #include <MIESUtils.h>
 #include <Windows.h>
-#include <sstream>
 #include <exception>
+#include <sstream>
 #include <string>
 
 class IgorException : public std::exception
@@ -19,16 +19,16 @@ public:
   // - Compiler warning allows us to find usages later
   __declspec(deprecated("Using default error code.  You should replace this "
                         "with a custom error code")) IgorException();
-  IgorException(int errorCode);
-  IgorException(int errorCode, const std::string &errorMessage);
+  explicit IgorException(int errorCode);
+  IgorException(int errorCode, std::string errorMessage);
 
-  const char *what() const;
+  const char *what() const override;
 
   /// Displays the exception if required; gets the return code.
   int HandleException() const;
 };
 
-int HandleException(const std::exception e);
+int HandleException(const std::exception &exception);
 
 #define BEGIN_OUTER_CATCH                                                      \
   try                                                                          \
